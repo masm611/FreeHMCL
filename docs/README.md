@@ -1,3 +1,5 @@
+HMCL启动器的fork，移除了下载限制以方便使用
+
 <!-- #BEGIN BLOCK -->
 <!-- #PROPERTY NAME=TITLE -->
 <div align="center">
