@@ -40,7 +40,9 @@ public final class RegionUtils {
 
     /// Pre-check if the network is in China Mainland to avoid blocking the UI thread.
     public static void init() {
-        Schedulers.io().execute(RegionUtils::isIsChinaMainlandNetwork);
+        if (IS_CHINA_MAINLAND_MACHINE) {
+            Schedulers.io().execute(RegionUtils::isIsChinaMainlandNetwork);
+        }
     }
 
     private static final boolean IS_CHINA_MAINLAND_MACHINE = checkMachineIsChinaMainland();
@@ -73,25 +75,6 @@ public final class RegionUtils {
     private static volatile @Nullable Boolean isChinaMainlandNetwork;
 
     private static boolean checkChinaMainlandNetwork() {
-        if (!IS_CHINA_MAINLAND_MACHINE)
-            return false;
-
-        switch (ZoneId.systemDefault().getId()) {
-            case "Antarctica/Casey",
-                 "Asia/Hong_Kong",
-                 "Asia/Irkutsk",
-                 "Asia/Kuching",
-                 "Asia/Macau",
-                 "Asia/Makassar",
-                 "Asia/Manila",
-                 "Asia/Singapore",
-                 "Asia/Taipei",
-                 "Asia/Ulaanbaatar",
-                 "Australia/Perth" -> {
-                return false;
-            }
-        }
-
         @NotNullByDefault
         @JsonSerializable
         record IpWhoIsResponse(boolean success, String country_code) {
@@ -108,6 +91,10 @@ public final class RegionUtils {
     }
 
     public static boolean isIsChinaMainlandNetwork() {
+        if (!IS_CHINA_MAINLAND_MACHINE) {
+            return false;
+        }
+
         Boolean value = isChinaMainlandNetwork;
         if (value != null)
             return value;
